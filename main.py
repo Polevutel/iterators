@@ -1,10 +1,23 @@
-def flat_generator(list_of_lists):
-    for sublist in list_of_lists:
-        for item in sublist:
-            yield item
+class FlatIterator:
+
+    def __init__(self, list_of_lists):
+        self.flat_list = [item for sublist in list_of_lists for item in sublist]
+        self.index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index < len(self.flat_list):
+            item = self.flat_list[self.index]
+            self.index += 1
+            return item
+        else:
+            raise StopIteration
 
 
-def test_2():
+def test_1():
+
     list_of_lists_1 = [
         ['a', 'b', 'c'],
         ['d', 'e', 'f', 'h', False],
@@ -12,15 +25,13 @@ def test_2():
     ]
 
     for flat_iterator_item, check_item in zip(
-            flat_generator(list_of_lists_1),
+            FlatIterator(list_of_lists_1),
             ['a', 'b', 'c', 'd', 'e', 'f', 'h', False, 1, 2, None]
     ):
         assert flat_iterator_item == check_item
 
-    assert list(flat_generator(list_of_lists_1)) == ['a', 'b', 'c', 'd', 'e', 'f', 'h', False, 1, 2, None]
-    assert isinstance(flat_generator(list_of_lists_1), types.GeneratorType)
+    assert list(FlatIterator(list_of_lists_1)) == ['a', 'b', 'c', 'd', 'e', 'f', 'h', False, 1, 2, None]
 
 
-if __name__ == 'main':
-    test_2()
-
+if __name__ == '__main__':
+    test_1()
